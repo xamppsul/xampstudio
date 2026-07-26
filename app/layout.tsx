@@ -1,7 +1,9 @@
 import { Analytics } from '@vercel/analytics/next'
 import type { Metadata, Viewport } from 'next'
 import './globals.css'
-import Navigation from '@/components/Navigation'
+import { ClientWrapper } from '@/components/ClientWrapper'
+import { ThemeProvider } from '@/providers/ThemeProvider'
+import { LanguageProvider } from '@/providers/LanguageProvider'
 
 export const metadata: Metadata = {
   title: "Muhammad Syamsul Ma'rif | Software Engineer",
@@ -43,9 +45,14 @@ export default function RootLayout({
   return (
     <html lang="en" className="bg-background scroll-smooth">
       <body className="antialiased bg-background text-foreground">
-        <Navigation />
-        {children}
-        {process.env.NODE_ENV === 'production' && <Analytics />}
+        <ThemeProvider>
+          <LanguageProvider>
+            <ClientWrapper>
+              {children}
+            </ClientWrapper>
+            {process.env.NODE_ENV === 'production' && <Analytics />}
+          </LanguageProvider>
+        </ThemeProvider>
       </body>
     </html>
   )

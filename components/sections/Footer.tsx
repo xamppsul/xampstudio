@@ -2,8 +2,10 @@
 
 import { config } from '@/data/config'
 import Link from 'next/link'
+import { useLanguage } from '@/providers/LanguageProvider'
 
 export default function Footer() {
+  const { t } = useLanguage()
   const currentYear = new Date().getFullYear()
 
   return (
@@ -11,21 +13,21 @@ export default function Footer() {
       <div className="max-w-4xl mx-auto">
         <div className="grid md:grid-cols-3 gap-8 mb-12 md:mb-16">
           <div>
-            <h3 className="font-semibold text-foreground mb-4">Navigation</h3>
+            <h3 className="font-semibold text-foreground mb-4">{t('footer.links')}</h3>
             <ul className="space-y-2">
               <li>
                 <Link href="#projects" className="text-muted-foreground hover:text-foreground transition-colors">
-                  Projects
+                  {t('nav.projects')}
                 </Link>
               </li>
               <li>
                 <Link href="#skills" className="text-muted-foreground hover:text-foreground transition-colors">
-                  Skills
+                  {t('nav.skills')}
                 </Link>
               </li>
               <li>
                 <Link href="#contact" className="text-muted-foreground hover:text-foreground transition-colors">
-                  Contact
+                  {t('nav.contact')}
                 </Link>
               </li>
             </ul>
@@ -85,7 +87,7 @@ export default function Footer() {
         </div>
 
         <div className="border-t border-border pt-8 flex flex-col md:flex-row justify-between items-center gap-4 text-sm text-muted-foreground">
-          <p>&copy; {currentYear} {config.name}. All rights reserved.</p>
+          <p>&copy; {currentYear} {config.name}. {t('footer.copyright')}</p>
           <p>Designed & built with care</p>
         </div>
       </div>
