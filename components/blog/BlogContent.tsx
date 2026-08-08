@@ -2,9 +2,9 @@
 
 import { BlogPost } from '@/data/blog'
 import Link from 'next/link'
-import Image from 'next/image'
 import { Calendar, Clock } from 'lucide-react'
 import { useLanguage } from '@/providers/LanguageProvider'
+import { BlogImagePlaceholder } from '@/components/ui/BlogImagePlaceholder'
 
 interface BlogContentProps {
   posts: BlogPost[]
@@ -36,12 +36,9 @@ export default function BlogContent({ posts }: BlogContentProps) {
               <article key={post.id} className="group bg-card/50 rounded-xl border border-border overflow-hidden hover:border-primary/50 transition-all duration-300">
                 {post.image && (
                   <div className="relative h-48 overflow-hidden bg-muted">
-                    <Image
-                      src={post.image}
-                      alt={post.title}
-                      fill
-                      className="object-cover group-hover:scale-105 transition-transform duration-300"
-                    />
+                    <div className="transition-transform duration-300 group-hover:scale-105 absolute inset-0">
+                      <BlogImagePlaceholder category={post.category} />
+                    </div>
                   </div>
                 )}
                 <div className="p-6">
@@ -84,12 +81,9 @@ export default function BlogContent({ posts }: BlogContentProps) {
                 <article key={post.id} className="group bg-card/50 rounded-lg border border-border p-6 hover:border-primary/50 transition-all duration-300 flex gap-6">
                   {post.image && (
                     <div className="hidden md:block relative w-32 h-32 flex-shrink-0 overflow-hidden rounded-lg bg-muted">
-                      <Image
-                        src={post.image}
-                        alt={post.title}
-                        fill
-                        className="object-cover group-hover:scale-105 transition-transform duration-300"
-                      />
+                      <div className="transition-transform duration-300 group-hover:scale-105 absolute inset-0">
+                        <BlogImagePlaceholder category={post.category} />
+                      </div>
                     </div>
                   )}
                   <div className="flex-1">

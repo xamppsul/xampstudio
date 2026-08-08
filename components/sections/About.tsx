@@ -1,20 +1,15 @@
 'use client'
 
 import { config } from '@/data/config'
-import Image from 'next/image'
 import { useLanguage } from '@/providers/LanguageProvider'
 
 export default function About() {
   const { t } = useLanguage()
   return (
     <section id="about" className="py-20 md:py-32 px-4 md:px-8 bg-card/50 relative overflow-hidden">
-      <div className="absolute inset-0 -z-10 opacity-20">
-        <Image
-          src="/images/tech-background.png"
-          alt="tech background"
-          fill
-          className="object-cover"
-        />
+      {/* Decorative background: soft radial glow instead of a missing photo */}
+      <div className="absolute inset-0 -z-10 opacity-40">
+        <div className="absolute top-0 right-0 w-[26rem] h-[26rem] rounded-full bg-primary/10 blur-3xl" />
       </div>
       <div className="max-w-4xl mx-auto relative z-10">
         <div className="mb-12 md:mb-16">

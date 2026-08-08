@@ -4,8 +4,8 @@ import { useState } from 'react'
 import { blogPosts } from '@/data/blog'
 import { useLanguage } from '@/providers/LanguageProvider'
 import Link from 'next/link'
-import Image from 'next/image'
 import { Calendar, Clock, ArrowRight } from 'lucide-react'
+import { BlogImagePlaceholder } from '@/components/ui/BlogImagePlaceholder'
 
 export default function Blog() {
   const { t } = useLanguage()
@@ -18,7 +18,7 @@ export default function Blog() {
       <div className="max-w-6xl mx-auto">
         <div className="mb-12 md:mb-16">
           <h2 className="text-4xl md:text-5xl font-bold text-foreground mb-4">
-            {showAll ? t('blog.title') : t('blog.title')}
+            {t('blog.title')}
           </h2>
           <div className="h-1 w-16 bg-primary rounded-full"></div>
         </div>
@@ -31,12 +31,9 @@ export default function Blog() {
               className="group bg-card rounded-lg overflow-hidden border border-border hover:border-primary hover:shadow-lg transition-all duration-300"
             >
               <div className="relative h-48 overflow-hidden bg-muted">
-                <Image
-                  src={post.image}
-                  alt={post.title}
-                  fill
-                  className="object-cover group-hover:scale-110 transition-transform duration-300"
-                />
+                <div className="transition-transform duration-300 group-hover:scale-110 absolute inset-0">
+                  <BlogImagePlaceholder category={post.category} />
+                </div>
                 <div className="absolute top-4 right-4">
                   <span className="inline-block px-3 py-1 bg-primary text-primary-foreground text-xs font-semibold rounded-full">
                     {post.category}

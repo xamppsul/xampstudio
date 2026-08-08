@@ -3,8 +3,8 @@
 import { BlogPost } from '@/data/blog'
 import { useLanguage } from '@/providers/LanguageProvider'
 import Link from 'next/link'
-import Image from 'next/image'
 import { Calendar, Clock, ArrowLeft, Tag } from 'lucide-react'
+import { BlogImagePlaceholder } from '@/components/ui/BlogImagePlaceholder'
 
 interface BlogPostContentProps {
   post: BlogPost
@@ -55,13 +55,7 @@ export default function BlogPostContent({ post, relatedPosts }: BlogPostContentP
         {/* Featured Image */}
         {post.image && (
           <div className="relative w-full h-96 rounded-xl overflow-hidden mb-12 bg-muted">
-            <Image
-              src={post.image}
-              alt={post.title}
-              fill
-              className="object-cover"
-              priority
-            />
+            <BlogImagePlaceholder category={post.category} />
           </div>
         )}
 

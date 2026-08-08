@@ -37,14 +37,34 @@ export const viewport: Viewport = {
   ],
 }
 
+// Runs before React hydrates, so the correct theme class is on <html>
+// from the very first paint. This avoids the light/dark "flash" and keeps
+// ThemeProvider's initial state consistent with what's already rendered.
+const themeInitScript = `
+(function () {
+  try {
+    var saved = localStorage.getItem('theme');
+    var systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    var theme = saved === 'light' || saved === 'dark' ? saved : (systemPrefersDark ? 'dark' : 'light');
+    var html = document.documentElement;
+    html.classList.remove('light', 'dark');
+    html.classList.add(theme);
+    html.style.colorScheme = theme;
+  } catch (e) {}
+})();
+`
+
 export default function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode
 }>) {
   return (
-    <html lang="en" className="bg-background scroll-smooth">
-      <body className="antialiased bg-background text-foreground">
+    <html lang="en" className="bg-background scroll-smooth" suppressHydrationWarning>
+      <head>
+        <script dangerouslySetInnerHTML={{ __html: themeInitScript }} />
+      </head>
+      <body className="antialiased bg-background text-foreground" suppressHydrationWarning>
         <ThemeProvider>
           <LanguageProvider>
             <ClientWrapper>

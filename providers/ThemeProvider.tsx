@@ -7,49 +7,59 @@ type Theme = 'light' | 'dark'
 interface ThemeContextType {
   theme: Theme
   toggleTheme: () => void
+  setTheme: (theme: Theme) => void
 }
 
 const ThemeContext = createContext<ThemeContextType | undefined>(undefined)
 
+function applyTheme(newTheme: Theme) {
+  const html = document.documentElement
+  // Always set both classes explicitly so the theme never depends on the
+  // OS `prefers-color-scheme` media query once the user (or the app) has
+  // made a decision. This is what previously let a system-dark OS keep
+  // forcing dark styles even after the user picked "light".
+  html.classList.remove(newTheme === 'dark' ? 'light' : 'dark')
+  html.classList.add(newTheme)
+  html.style.colorScheme = newTheme
+}
+
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
-  const [theme, setTheme] = useState<Theme>('dark')
-  const [mounted, setMounted] = useState(false)
+  // Read the theme the blocking inline script (see layout.tsx) already
+  // applied to <html>, so this initial state matches what's on screen and
+  // React doesn't need to wait for an effect to "unlock" the real UI.
+  const [theme, setThemeState] = useState<Theme>(() => {
+    if (typeof window === 'undefined') return 'dark'
+    return document.documentElement.classList.contains('light') ? 'light' : 'dark'
+  })
 
-  const applyTheme = (newTheme: Theme) => {
-    const html = document.documentElement
-    if (newTheme === 'dark') {
-      html.classList.add('dark')
-      html.style.colorScheme = 'dark'
-    } else {
-      html.classList.remove('dark')
-      html.style.colorScheme = 'light'
-    }
-  }
-
+  // Keep localStorage/system-preference in sync on mount in case this ever
+  // renders before the inline script (e.g. fast refresh in dev).
   useEffect(() => {
     const saved = localStorage.getItem('theme') as Theme | null
     const systemTheme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'
     const initialTheme = saved || systemTheme
-    setTheme(initialTheme)
+    setThemeState(initialTheme)
     applyTheme(initialTheme)
-    setMounted(true)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
+  const setTheme = (newTheme: Theme) => {
+    setThemeState(newTheme)
+    applyTheme(newTheme)
+    localStorage.setItem('theme', newTheme)
+  }
+
   const toggleTheme = () => {
-    setTheme((prevTheme) => {
-      const newTheme = prevTheme === 'dark' ? 'light' : 'dark'
-      applyTheme(newTheme)
-      localStorage.setItem('theme', newTheme)
-      return newTheme
-    })
+    setTheme(theme === 'dark' ? 'light' : 'dark')
   }
 
-  if (!mounted) {
-    return <>{children}</>
-  }
-
+  // The context is always provided (even before the mount-sync effect
+  // runs) so any child calling useTheme() never throws. Previously this
+  // returned bare `children` while unmounted, which meant any component
+  // reading useTheme() during that window crashed with
+  // "useTheme must be used within ThemeProvider".
   return (
-    <ThemeContext.Provider value={{ theme, toggleTheme }}>
+    <ThemeContext.Provider value={{ theme, toggleTheme, setTheme }}>
       {children}
     </ThemeContext.Provider>
   )
