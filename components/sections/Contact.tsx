@@ -3,24 +3,26 @@
 import { config } from '@/data/config'
 import { Mail, Code2, Share2, Send } from 'lucide-react'
 import Link from 'next/link'
+import { useLanguage } from '@/providers/LanguageProvider'
 
 export default function Contact() {
+  const { t } = useLanguage()
   return (
     <section id="contact" className="py-20 md:py-32 px-4 md:px-8">
       <div className="max-w-3xl mx-auto text-center">
         <div className="mb-12 md:mb-16">
-          <h2 className="text-4xl md:text-5xl font-bold text-foreground mb-4">Let&apos;s Connect</h2>
+          <h2 className="text-4xl md:text-5xl font-bold text-foreground mb-4">{t('contact.title')}</h2>
           <div className="flex justify-center">
             <div className="h-1 w-16 bg-primary rounded-full"></div>
           </div>
         </div>
 
         <p className="text-xl text-muted-foreground mb-12 leading-relaxed">
-          I&apos;m always interested in hearing about new projects and opportunities. Whether you have a question or just want to say hi, feel free to get in touch!
+          {t('contact.description')}
         </p>
 
         <div className="bg-card/50 rounded-xl border border-border p-8 md:p-12 mb-12">
-          <h3 className="text-2xl font-semibold text-foreground mb-8">Contact Information</h3>
+          <h3 className="text-2xl font-semibold text-foreground mb-8">{t('contact.title')}</h3>
 
           <div className="space-y-6">
             <Link
@@ -39,7 +41,7 @@ export default function Contact() {
         </div>
 
         <div className="mb-12">
-          <h3 className="text-lg font-semibold text-foreground mb-8">Find me on social media</h3>
+          <h3 className="text-lg font-semibold text-foreground mb-8">{t('contact.email')}</h3>
           <div className="flex justify-center gap-6 flex-wrap">
             <Link
               href={config.social.github}

@@ -1,7 +1,9 @@
 import { Analytics } from '@vercel/analytics/next'
 import type { Metadata, Viewport } from 'next'
 import './globals.css'
-import Navigation from '@/components/Navigation'
+import { ClientWrapper } from '@/components/ClientWrapper'
+import { ThemeProvider } from '@/providers/ThemeProvider'
+import { LanguageProvider } from '@/providers/LanguageProvider'
 
 export const metadata: Metadata = {
   title: "Muhammad Syamsul Ma'rif | Software Engineer",
@@ -35,17 +37,42 @@ export const viewport: Viewport = {
   ],
 }
 
+// Runs before React hydrates, so the correct theme class is on <html>
+// from the very first paint. This avoids the light/dark "flash" and keeps
+// ThemeProvider's initial state consistent with what's already rendered.
+const themeInitScript = `
+(function () {
+  try {
+    var saved = localStorage.getItem('theme');
+    var systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    var theme = saved === 'light' || saved === 'dark' ? saved : (systemPrefersDark ? 'dark' : 'light');
+    var html = document.documentElement;
+    html.classList.remove('light', 'dark');
+    html.classList.add(theme);
+    html.style.colorScheme = theme;
+  } catch (e) {}
+})();
+`
+
 export default function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode
 }>) {
   return (
-    <html lang="en" className="bg-background scroll-smooth">
-      <body className="antialiased bg-background text-foreground">
-        <Navigation />
-        {children}
-        {process.env.NODE_ENV === 'production' && <Analytics />}
+    <html lang="en" className="bg-background scroll-smooth" suppressHydrationWarning>
+      <head>
+        <script dangerouslySetInnerHTML={{ __html: themeInitScript }} />
+      </head>
+      <body className="antialiased bg-background text-foreground" suppressHydrationWarning>
+        <ThemeProvider>
+          <LanguageProvider>
+            <ClientWrapper>
+              {children}
+            </ClientWrapper>
+            {process.env.NODE_ENV === 'production' && <Analytics />}
+          </LanguageProvider>
+        </ThemeProvider>
       </body>
     </html>
   )
